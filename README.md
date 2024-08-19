@@ -38,9 +38,21 @@ history = []
 
 r = client.ask_central_brain(question, history=history)
 print(r)
+```
+
+### History
+
+#### 0.2.0
+此版本为同步特性更新，主要同步内容如下：
+ - GLM、OpenAI 类抽象
+ - 百度百科搜索能力
+ - 自定义 AI 人格
+ - 新增了模型 API URL 的配置项
+ - 联网搜索优化
+ - 页面内容提取
 
 
-## Valid Platforms, Models
+### Valid Platforms, Models
 
 The plugin supports various platform and model configurations, including but not limited to the following options. 
 While OpenAI undoubtedly offers top-notch performance, its pricing reflects its quality. 
