@@ -13,13 +13,7 @@ class DashscopeModel(BaseLLMModel):
     def __init__(self, api_key: str, model: str = "qwen-turbo"):
         self.api_key = api_key
         self.model = model
-
-    def get_headers(self):
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.api_key}'
-        }
-        return headers
+        self.default_api_url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
 
     def get_body_template(self, temperature: float):
         body = {
@@ -29,7 +23,7 @@ class DashscopeModel(BaseLLMModel):
         }
         return body
 
-    async def ask_model(
+    def ask_model(
             self,
             question: str,
             system_prompt: str = None,
@@ -41,7 +35,7 @@ class DashscopeModel(BaseLLMModel):
          - system_prompt：系统级提示词
          - message_history: 消息历史列表
         """
-        url = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation'
+        url = self.get_api_url()
         headers = self.get_headers()
         body = self.get_body_template(temperature)
 
@@ -55,14 +49,12 @@ class DashscopeModel(BaseLLMModel):
         user_message = {"role": "user", "content": question}
         body["input"]["messages"].append(user_message)
 
-        async with httpx.AsyncClient() as client:
+        with httpx.Client() as client:
             try:
-                r = await client.post(url, headers=headers, json=body, timeout=self.timeout)
+                r = client.post(url, headers=headers, json=body, timeout=self.timeout)
                 ans = r.json()["output"]["text"]
-            except httpx.ReadTimeout as e:
-                print(f"访问大模型超时, {e}")
-                ans = "访问大模型超时"
+            except httpx.ConnectTimeout as e:
+                raise httpx.ConnectTimeout("访问大模型超时")
             except Exception as e:
-                print(r.text + str(e))
-                ans = "有错误，自己看日志，可能过期了"
+                raise e
             return ans

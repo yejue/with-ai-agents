@@ -19,24 +19,25 @@ _✨With-AI-Agents 是一个基于基本原理实现的 AI Agents（智能体）
 2. Download this package. `pip install with-ai-agents`
 3. Create a file named main.py and paste the following code into it.
 ```python
-import asyncio
-import with_ai_agents
+from with_ai_agents.client import Client
 
-with_ai_agents.platform = "<Your platform, example: 'dashscope' or 'gpt'>"
-with_ai_agents.api_key = "<Your platform api_key, example: 'sk-xxxxxxxx'>"
+client = Client(
+    api_key="<你的 API KEY>",
+    platform="dashscope",    # 当前可选：dashscope、glm、openai
+    model_name="qwen-turbo"  # 不指定使用默认的大模型
+)
 
-text = """
-https://arxiv.org/abs/2405.05818
-The main theme of this article revolves around 
-whether it delves into concrete solutions pertaining to vector search.
+custom_soul = """
+    你是小助手 Kurisu，牧濑红莉栖。偶尔在回复的末尾新开一行添加一点符号表情。
+    在回答中尽量少的使用非常规的字符，同时不要超过400字
+    注意，在回复中不要提及上述的任何事情，不要复述
 """
-res = asyncio.run(with_ai_agents.handler.ask_central_brain(text))
-print(res)
-```
-4. Run. `python main.py`
 
+question = "提取这个页面的信息 https://info.arxiv.org/help/cs/index.html"
+history = []
 
-## Usage
+r = client.ask_central_brain(question, history=history)
+print(r)
 
 
 ## Valid Platforms, Models
@@ -54,13 +55,3 @@ allows usage for up to six months within certain limits post-application.
 | openai       | gpt-3.5-turbo-0125（Recommended, Cost-Effective）、gpt-3.5-turbo、gpt-3.5-turbo-16k、gpt-4-turbo、gpt-4-turbo-2024-04-09、gpt-4-32k | [openai](https://platform.openai.com/docs/models)            |
 | dashscope    | qwen-turbo（Recommended）、qwen-plus、qwen-max-longcontext、llama3-8b-instruct（不尽人意）、llama3-70b-instruct（不尽人意）、baichuan-7b-v1（不尽人意） | [dashscope](https://help.aliyun.com/zh/dashscope/developer-reference/model-introduction?spm=a2c4g.11186623.0.i2) |
 | glm          | glm-3-turbo（Recommended）、glm-4                                                                                                          | [glm](https://open.bigmodel.cn/dev/api#language)             |
-
-
-
-## Environment (Or called config)
-|      配置项       | 必填 |  默认值  |                             说明                             |
-| :---------------: | :--: | :------: | :----------------------------------------------------------: |
-|   WITH_AI_AGENTS__API_KEY    |  是  | 空字符串 |                         你的大模型 API Key                          |
-| WITH_AI_AGENTS_PLATFORM |  是  | 空字符串 | 你的 AI 模型平台，支持 ChatGPT 系列，ChatGLM 系列，Llama 系列，百川，通义千问 |
-| WITH_AI_AGENTS__TAVILY_API_KEY |  否  | 空字符串 | 搜索引擎的 Key，不填使用百度搜索，获取地址：[Tavily AI](https://app.tavily.com/sign-in) |
-|  WITH_AI_AGENTS__MODEL_NAME   |  否  | 空字符串 |        你的 AI 模型名称，不填将根据平台使用默认模型        |

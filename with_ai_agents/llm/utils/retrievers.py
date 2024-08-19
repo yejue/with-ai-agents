@@ -1,5 +1,4 @@
 import re
-import traceback
 import json
 import httpx
 
@@ -33,7 +32,7 @@ def parse_baidu_search_result(html_text: str):
         try:
             s_data = json.loads(s_data[0])
         except Exception as e:
-            print(f"WARNING: 有信息获取失败，但不影响 {e}")
+            print(f"[ERROR] {e}")
             continue
         item_dict = {
             "title": s_data["title"],
@@ -44,11 +43,11 @@ def parse_baidu_search_result(html_text: str):
     return res_list
 
 
-async def search_baidu(query: str, max_results: int = 5):
+def search_baidu(query: str, max_results: int = 5):
     """百度搜索"""
     url = f"https://www.baidu.com/s?wd={query}"
-    async with httpx.AsyncClient() as client:
-        r = await client.get(url, headers=headers)
+    with httpx.Client() as client:
+        r = client.get(url, headers=headers)
         if r.status_code > 399:
             return "内容获取失败"
         results = parse_baidu_search_result(r.content.decode("utf8"))[:max_results]
@@ -56,52 +55,40 @@ async def search_baidu(query: str, max_results: int = 5):
         return raw_content
 
 
-async def search_bing(query: str):
-    """必应搜索"""
+def parse_baidu_wiki(html_text: str):
+    """解析百度百科页面信息"""
+    soup = BeautifulSoup(html_text, 'html.parser')
+
+    # 查找所有类名包含 'mainContent_' 的元素
+    main_contents = soup.find_all(class_=lambda x: x and 'mainContent_' in x)
+
+    # 提取第一个元素的文本
+    if main_contents:
+        return main_contents[0].get_text(strip=True)
+    else:
+        return "内容获取失败"
+
+
+def search_baidu_wiki(query: str):
+    """搜索百度百科"""
+
     query = quote(query)
-    url = f"https://cn.bing.com/search?q={query}"
-    async with httpx.AsyncClient() as client:
-        r = await client.get(url, headers=headers)
-        pure_text = get_page_pure_text(r.text)
-        return pure_text
+    url = f"https://baike.baidu.com/item/{query}?fromModule=lemma_search-box"
+    with httpx.Client() as client:
+        r = client.get(url, headers=headers, follow_redirects=True)
+        if r.status_code > 399:
+            return "内容获取失败"
+        res = parse_baidu_wiki(r.text)
+    return res
 
 
-async def search_tavily(query: str, api_key: str = None, max_results=5):
-    """泰维利亚搜索"""
-    url = "https://api.tavily.com/search"
-
-    data = {
-        "api_key": api_key,
-        "query": query,
-        "search_depth": "basic",
-        "include_answer": False,
-        "include_images": False,
-        "include_raw_content": False,
-        "max_results": max_results,
-        "include_domains": [],
-        "exclude_domains": []
-    }
-    async with httpx.AsyncClient() as client:
-        try:
-            r = await client.post(url, headers=headers, json=data)
-            results = r.json()["results"]
-
-            # 压缩内容，只提取 title 和 content
-            results = [f"《{item['title']}》:{item['content']}" for item in results]
-
-            return json.dumps(results, ensure_ascii=False)
-        except Exception as e:
-            print(f"WARNING: {query} 内容提取失败, {e}")
-            return "内容提取失败"
-
-
-async def get_url_content(url: str):
+def get_url_content(url: str):
     """提取指定页面内容"""
-    async with httpx.AsyncClient() as client:
+    with httpx.Client() as client:
         try:
-            r = await client.get(url, headers=headers)
+            r = client.get(url, headers=headers)
             pure_text = get_page_pure_text(r.text)
         except Exception as e:
-            print(f"WARNING: {url} 内容提取失败, {e}")
+            print(f"[ERROR] {e}")
             return "内容提取失败"
         return pure_text
