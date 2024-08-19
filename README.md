@@ -34,6 +34,13 @@ custom_soul = """
 """
 
 question = "提取这个页面的信息 https://info.arxiv.org/help/cs/index.html"
+
+# 你的 history 应该类似于这样
+# history = [
+#    {"role": "user", "content": "内容"},
+#    {"role": "assistant", "content": "内容"},
+# ]
+
 history = []
 
 r = client.ask_central_brain(question, history=history)
