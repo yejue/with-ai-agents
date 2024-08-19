@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "with-ai-agents"
-version = "0.2.0"
+version = "0.2.1"
 description = "With-AI-Agents 是一个基于基本原理实现的 AI Agents（智能体），拥有联网搜索能力、页面内容提取并学习回答等功能"
 authors = ["yejue <1145331931@qq.com>"]
 readme = "README.md"

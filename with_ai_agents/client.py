@@ -9,7 +9,7 @@ class Client:
             self, api_key: str = None,
             api_url: str = None,
             platform: str = "dashscope",
-            model_name: str = "qwen-turbo"
+            model_name: str = None
     ):
         self.api_key: str = api_key
         self.api_url: str = api_url
