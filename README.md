@@ -60,17 +60,10 @@ print(r)
 
 
 ### Valid Platforms, Models
-
-The plugin supports various platform and model configurations, including but not limited to the following options. 
-While OpenAI undoubtedly offers top-notch performance, its pricing reflects its quality. 
-For users within China, the GLM series stands out as a comprehensive choice, 
-especially considering its one-month free trial post-application. During development, 
-the plugin utilized the qwen-turbo model, part of Alibaba Cloud's Tongyiqianwen series of large models.
-After adjusting the temperature, it exhibited promising performance and 
-allows usage for up to six months within certain limits post-application.
+可以支持以下三种平台的所有模型，实际上，凡是和下面三种平台一致的 history 输入格式都可以使用。可以通过 Client 的 `api_url` 参数来更改实际提供服务的接口地址。
 
 | 平台（platform） | 模型（model_name）                                                                                                               | 相关文档                                                     |
 |--------------|------------------------------------------------------------------------------------------------------------------------------| ------------------------------------------------------------ |
-| openai       | gpt-3.5-turbo-0125（Recommended, Cost-Effective）、gpt-3.5-turbo、gpt-3.5-turbo-16k、gpt-4-turbo、gpt-4-turbo-2024-04-09、gpt-4-32k | [openai](https://platform.openai.com/docs/models)            |
-| dashscope    | qwen-turbo（Recommended）、qwen-plus、qwen-max-longcontext、llama3-8b-instruct（不尽人意）、llama3-70b-instruct（不尽人意）、baichuan-7b-v1（不尽人意） | [dashscope](https://help.aliyun.com/zh/dashscope/developer-reference/model-introduction?spm=a2c4g.11186623.0.i2) |
-| glm          | glm-3-turbo（Recommended）、glm-4                                                                                                          | [glm](https://open.bigmodel.cn/dev/api#language)             |
+| openai       | gpt 全系列 | [openai](https://platform.openai.com/docs/models)            |
+| dashscope    | 通意千问系列| [dashscope](https://help.aliyun.com/zh/dashscope/developer-reference/model-introduction?spm=a2c4g.11186623.0.i2) |
+| glm          | 智普清言系列  | [glm](https://open.bigmodel.cn/dev/api#language)             |
